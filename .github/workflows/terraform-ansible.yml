@@ -51,9 +51,6 @@ jobs:
       - name: Add SSH private key3
         run: |
           chmod 600 ~/.ssh/bayer.pem
-      - name: Add SSH private key4
-        run: |
-          ssh-keyscan -H $(terraform output -raw public_ip) >> ~/.ssh/known_hosts
 
       # Step 7: Plan Terraform
       - name: Terraform Plan
@@ -62,6 +59,10 @@ jobs:
       # Step 8: Apply Terraform
       - name: Terraform Apply
         run: terraform apply -auto-approve
+
+      - name: Add SSH private key4
+        run: |
+          ssh-keyscan -H $(terraform output -raw public_ip) >> ~/.ssh/known_hosts
 
       # Step 9: Run Ansible Playbook
       - name: Run Ansible
