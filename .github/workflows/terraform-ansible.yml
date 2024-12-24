@@ -42,11 +42,17 @@ jobs:
         run: terraform init -reconfigure
 
       # Step 4: Configure SSH private key
-      - name: Add SSH private key
+      - name: Add SSH private key1
         run: |
           mkdir -p ~/.ssh
+      - name: Add SSH private key2
+        run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bayer.pem
+      - name: Add SSH private key3
+        run: |
           chmod 600 ~/.ssh/bayer.pem
+      - name: Add SSH private key4
+        run: |
           ssh-keyscan -H $(terraform output -raw public_ip) >> ~/.ssh/known_hosts
 
       # Step 7: Plan Terraform
