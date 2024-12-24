@@ -9,6 +9,8 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     environment: production
+    env:
+      AWS_REGION: "us-east-1"
 
     steps:
       # Step 1: Checkout the repository
@@ -28,11 +30,12 @@ jobs:
           sudo apt-get install -y ansible sshpass
 
       # Step 5: Configure aws
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{secrets.ACCOUNT_ID}}:role/${{secrets.ROLE_NAME}}
-          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
           
       # Step 5: Initialize Terraform
       - name: Terraform Init
