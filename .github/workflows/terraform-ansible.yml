@@ -26,6 +26,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ansible sshpass
+
+      # Step 5: Configure aws
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{secrets.ACCOUNT_ID}}:role/${{secrets.ROLE_NAME}}
+          aws-region: us-east-1
           
       # Step 5: Initialize Terraform
       - name: Terraform Init
@@ -38,13 +45,6 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bayer.pem
           chmod 600 ~/.ssh/bayer.pem
           ssh-keyscan -H $(terraform output -raw public_ip) >> ~/.ssh/known_hosts
-          
-      # Step 5: Configure aws
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          role-to-assume: arn:aws:iam::${{secrets.ACCOUNT_ID}}:role/${{secrets.ROLE_NAME}}
-          aws-region: us-east-1
 
       # Step 7: Plan Terraform
       - name: Terraform Plan
