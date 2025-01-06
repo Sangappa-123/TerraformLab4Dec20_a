@@ -1,0 +1,61 @@
+name: Terraform and Ansible Workflow
+
+on:
+  workflow_dispatch:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      AWS_REGION: "us-east-1"
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible sshpass
+
+      # Step 5: Configure aws
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          
+      # Step 5: Initialize Terraform
+      - name: Terraform Init
+        run: terraform init -reconfigure
+
+      # Step 4: Configure SSH private key
+      - name: Add SSH private key1
+        run: |
+          mkdir -p ~/.ssh
+      - name: Add SSH private key2
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bayer.pem
+      - name: Add SSH private key3
+        run: |
+          chmod 600 ~/.ssh/bayer.pem
+
+      # Step 7: Plan Terraform
+      - name: Terraform Plan
+        run: terraform plan
+
+      # Step 8: Apply Terraform
+      - name: Terraform Apply
+        run: terraform destroy -auto-approve
