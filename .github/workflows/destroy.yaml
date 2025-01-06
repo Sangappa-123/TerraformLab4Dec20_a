@@ -1,4 +1,4 @@
-name: Terraform and Ansible Workflow
+name: Terraform and Ansible Workflow Destroy
 
 on:
   workflow_dispatch:
